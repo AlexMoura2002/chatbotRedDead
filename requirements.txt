@@ -1,0 +1,15 @@
+streamlit 
+torch
+langchain
+pypdf
+sentence-transformers
+faiss-cpu
+accelerate
+transformers[torch]
+transformers==4.36.2
+#torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
+langchain-core==0.2.0 
+langchain-community==0.2.0
+google-generativeai
+
+#https://aistudio.google.com/app/apikey
