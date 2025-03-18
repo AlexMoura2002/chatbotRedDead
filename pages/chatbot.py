@@ -63,7 +63,7 @@ for msg in st.session_state.conversation_history:
     if msg["role"] == "user":
         st.markdown(f"🧑‍💻 **Você:** {msg['message']}")
     else:
-        st.markdown(f"🤖 **Chatbot:** {msg['message']}")  # 🔹 Evitando unsafe_allow_html
+        st.markdown(f"🤖 **Chatbot:** {msg['message']}")  
 
 # Entrada do usuário
 with st.form(key="chat_form", clear_on_submit=True):
@@ -75,7 +75,7 @@ if submit_button and user_input:
     with st.spinner("Buscando resposta..."):
         st.markdown(f"🧑‍💻 **Você:** {user_input}")
 
-        resposta = None  # Inicializa resposta
+        resposta = None  
 
         try:
             resposta = buscar_resposta_no_pdf(user_input, conteudo_pdf)
@@ -83,24 +83,20 @@ if submit_button and user_input:
             # Se não encontrou no PDF, usa a IA Gemini 1.5
             if not resposta:
                 resposta = gerar_resposta(user_input)
-             
 
-            # 🔹 Garante que a resposta seja string
-            resposta = str(resposta) if resposta else "Erro ao obter resposta."
+            # 🔹 Garante que a resposta seja string e processa quebras de linha corretamente
+            resposta = str(resposta).strip().replace("\n", "  \n") if resposta else "Erro ao obter resposta."
 
-            # 🔹 Substitui caracteres problemáticos
-            resposta = resposta.replace("\n", "  \n")  # Mantém quebras de linha
-            resposta = resposta.strip()  # Remove espaços extras
-
-            # 🔹 Debug no console para garantir que a resposta não está sendo cortada
+            # 🔹 Debug no console
             print(f"DEBUG - RESPOSTA COMPLETA:\n{resposta}")
 
-            # 🔹 Verificar tamanho da resposta antes de exibir
+            # 🔹 Verificar tamanho da resposta
             if len(resposta) > 1000:
-                print("⚠️ Resposta muito longa, pode estar sendo cortada!")
+                print("⚠️ Resposta muito longa, exibindo em expander!")
 
             # 🔹 Exibir resposta corretamente no chat
-            st.text_area("🤖 Chatbot:", resposta, height=300)
+            with st.expander("🤖 Resposta do Chatbot:"):
+                st.write(resposta, unsafe_allow_html=True)  
 
             # Salvar conversa no Firebase
             salvar_conversa(
